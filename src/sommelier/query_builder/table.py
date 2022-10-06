@@ -6,8 +6,8 @@ import pypika
 from pypika import functions
 from pypika.terms import Field, Star
 
-from sommelier.fields.regex_like import RegexLike
-from sommelier.functions import PercentileEst, PercentileTDigest, Percentile, DistinctCount
+from sommelier.query_builder.fields.regex_like import RegexLike
+from sommelier.query_builder.functions import PercentileEst, PercentileTDigest, Percentile, DistinctCount
 
 FIELD_AGGREGATION_PATTERN = re.compile(r'(.+)\((.+)\)\Z')
 PERCENTILE_EXTRACTION = re.compile(r'(\D+)(\d+)')

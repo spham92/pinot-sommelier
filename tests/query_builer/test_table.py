@@ -1,4 +1,4 @@
-from sommelier.table import Table
+from sommelier.query_builder.table import Table
 from pypika import Order
 
 

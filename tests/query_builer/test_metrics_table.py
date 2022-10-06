@@ -1,4 +1,4 @@
-from sommelier.metrics_table import MetricsTable
+from sommelier.query_builder.metrics_table import MetricsTable
 
 
 class MockTableQuery(MetricsTable):

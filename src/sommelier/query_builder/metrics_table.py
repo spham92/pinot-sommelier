@@ -1,6 +1,6 @@
 from typing import Callable, Dict
 
-from sommelier.table import Table
+from sommelier.query_builder.table import Table
 
 
 class MetricsTable(Table):

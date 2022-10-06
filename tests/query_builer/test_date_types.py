@@ -2,7 +2,7 @@ import pytest
 import os
 import time
 
-from sommelier.date_types import DateTypes, convert_date_to_type
+from sommelier.query_builder.date_types import DateTypes, convert_date_to_type
 
 MS_SINCE_EPOCH_20200303 = 1583193600000
 MINUTES_SINCE_EPOCH_20200303 = 26386560
