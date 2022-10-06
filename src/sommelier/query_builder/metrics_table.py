@@ -1,6 +1,7 @@
 from typing import Callable, Dict
 
 from sommelier.query_builder.table import Table
+from sommelier.types import ColumnTypeDict
 
 
 class MetricsTable(Table):
@@ -14,11 +15,19 @@ class MetricsTable(Table):
     set metrics - List of string column names
     set other - List of string column names
     """
-    table_name = ''
-    date_column = 'Date'
-    dimensions: Dict[str, Callable] = dict()
-    metrics: Dict[str, Callable] = dict()
-    other: Dict[str, Callable] = dict()
+
+    def __init__(self, table_name: str,
+                 dimension_columns: ColumnTypeDict,
+                 metrics_columns: ColumnTypeDict,
+                 date_column: str):
+
+        all_columns = dict(**dimension_columns, **metrics_columns, **{date_column: str})
+
+        super(MetricsTable, self).__init__(table_name, all_columns)
+
+        self.dimensions: Dict[str, Callable] = dimension_columns
+        self.metrics: Dict[str, Callable] = metrics_columns
+        self.date_column = date_column
 
     def _selected_column_strings(self):
         """
@@ -33,19 +42,6 @@ class MetricsTable(Table):
             return ['*']
 
         return self._selected
-
-    @property
-    def columns(self) -> Dict[str, Callable]:
-        """
-        In order for the base class's function to work and make it simpler for the developer, dynamically figure
-        out what the columns for this table is
-
-        Combine the columns in the dimensions, metrics, and other set.
-
-        :return: List of string column names
-        """
-
-        return dict(**self.dimensions, **self.metrics, **self.other)
 
     def select_all_dimensions(self):
         """

@@ -18,17 +18,32 @@ class MockTableQuery(MetricsTable):
     date_column = 'date'
 
 
+def get_fake_table():
+    return MetricsTable(
+        table_name='fake_table',
+        dimension_columns={
+            'flight_number': str,
+            'airport': str,
+            'model': str
+        },
+        metrics_columns={
+            'price': int,
+            'distance': int
+        },
+        date_column='date')
+
+
 def test_select_all_dimensions_and_metrics():
     """
     Ensure "*" is returned for selected column if all metrics and dimensions are selected
     """
-    query = MockTableQuery()
+    query = get_fake_table()
     query.select_all_dimensions()
     query.select_all_metrics()
 
     assert ['*'] == query._selected_column_strings()
 
-    query = MockTableQuery()
+    query = get_fake_table()
     query.select_all_dimensions()
     assert ['*'] != query._selected_column_strings()
 
@@ -37,7 +52,7 @@ def test_select_all_dimensions():
     """
     Ensure all the dimension columns are added to the selected list
     """
-    query = MockTableQuery()
+    query = get_fake_table()
     query.select_all_dimensions()
     assert len(query._selected) == 3
     assert 'flight_number' in query._selected
@@ -49,7 +64,7 @@ def test_select_all_metrics():
     """
     Ensure all the metrics columns are added to the selected list
     """
-    query = MockTableQuery()
+    query = get_fake_table()
     query.select_all_metrics()
     assert len(query._selected) == 2
     assert 'price' in query._selected
@@ -57,18 +72,18 @@ def test_select_all_metrics():
 
 
 def test_filter_date_between():
-    query = MockTableQuery()
+    query = get_fake_table()
     query.select_all_dimensions()
     query.filter_dates_between('20180101')
     assert 'date' in query.filters
     assert query.filters['date'][0]['op'] == '>='
 
-    query = MockTableQuery()
+    query = get_fake_table()
     query.select_all_dimensions()
     query.filter_dates_between(None, '20180101')
     assert query.filters['date'][0]['op'] == '<='
 
-    query = MockTableQuery()
+    query = get_fake_table()
     query.select_all_dimensions()
     query.filter_dates_between('20180101', '20180106')
     assert 'date' in query.filters

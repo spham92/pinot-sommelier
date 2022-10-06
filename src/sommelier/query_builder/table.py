@@ -1,6 +1,6 @@
 from collections import defaultdict
 import re
-from typing import Callable, Dict, Iterable, List, Union
+from typing import Dict, Iterable, List, Union
 
 import pypika
 from pypika import functions
@@ -8,6 +8,7 @@ from pypika.terms import Field, Star
 
 from sommelier.query_builder.fields.regex_like import RegexLike
 from sommelier.query_builder.functions import PercentileEst, PercentileTDigest, Percentile, DistinctCount
+from sommelier.types import ColumnTypeDict
 
 FIELD_AGGREGATION_PATTERN = re.compile(r'(.+)\((.+)\)\Z')
 PERCENTILE_EXTRACTION = re.compile(r'(\D+)(\d+)')
@@ -21,14 +22,13 @@ class Table(object):
     str table_name - The Pinot table name
     set columns - List of string column names that exist in the table
     """
-    table_name = ''
-    columns: Dict[str, Callable] = dict()
-    _pypika_table = None
-
     def __repr__(self):
         return self.get_sql_query()
 
-    def __init__(self):
+    def __init__(self, table_name: str, columns: ColumnTypeDict):
+        self.table_name = table_name
+        self.columns = columns
+
         self._selected = set()
         self.filters = defaultdict(list)
         self.custom_filters = []
@@ -36,12 +36,12 @@ class Table(object):
         self._order_by = []
         self._order = None
         self._limit = None
+        self._pypika_table = None
 
-    @classmethod
-    def get_pypika_table(cls):
-        if not cls._pypika_table:
-            cls._pypika_table = pypika.Table(cls.table_name)
-        return cls._pypika_table
+    def get_pypika_table(self):
+        if not self._pypika_table:
+            self._pypika_table = pypika.Table(self.table_name)
+        return self._pypika_table
 
     def get_sql_query(self):
         return str(self.get_query())
@@ -276,8 +276,7 @@ class Table(object):
         self.custom_filters.append(criterion)
         return self
 
-    @classmethod
-    def build_criterion_for_filter(cls, column_filters: Dict[str, List[Union[str, Dict[str, str]]]], concatenate_by_and=True):
+    def build_criterion_for_filter(self, column_filters: Dict[str, List[Union[str, Dict[str, str]]]], concatenate_by_and=True):
         """
         Helper function to build a pypika criterion to build a multiple AND clause for a set of columns
 
@@ -294,7 +293,7 @@ class Table(object):
         :param bool concatenate_by_and: Indicates whether to concatenate via AND or OR
         :return: pypika.terms.ComplexCriterion
         """
-        table = cls.get_pypika_table()
+        table = self.get_pypika_table()
         final_criterion = None
 
         for column in sorted(column_filters):
@@ -307,7 +306,7 @@ class Table(object):
                     operator = '=='
                     value = filter_value
 
-                criterion = cls.operator_to_criterion(operator, table_column, value)
+                criterion = self.operator_to_criterion(operator, table_column, value)
 
                 if criterion is None:
                     continue
