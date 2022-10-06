@@ -1,0 +1,25 @@
+[build-system]
+requires      = ["PyPika"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pinot-sommelier"
+version = "1.0.0"
+description = "Progmatically buil pinot queries"
+readme = "README.md"
+authors = [{ name = "Steven Pham", email = "stevenpham.dev@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: MIT License"
+]
+keywords = ["apache-pinot", "pinot"]
+dependencies = [
+    "PyPika"
+]
+requires-python = ">=3.9"
+
+[project.optional-dependencies]
+dev = ["pip-tools", "pytest"]
+
+[project.urls]
+Homepage = "https://github.com/spham92/pinot-sommelier"
