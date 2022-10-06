@@ -1,5 +1,5 @@
 [build-system]
-requires      = ["PyPika"]
+requires      = ["PyPika", "setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -23,3 +23,6 @@ dev = ["pip-tools", "pytest"]
 
 [project.urls]
 Homepage = "https://github.com/spham92/pinot-sommelier"
+
+[tool.setuptools.packages.find]
+where = ["src"]

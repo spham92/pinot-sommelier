@@ -25,17 +25,20 @@ def get_table_information_from_schema(schema_configuration):
     dimensions: ColumnTypeDict = {}
     time_columns = {}
 
-    for dimension_config in schema_configuration['dimensionFieldSpecs']:
-        dimensions[dimension_config['name']] = pinot_type_to_python_type[dimension_config['dataType']]
+    if 'dimensionFieldSpecs' in schema_configuration:
+        for dimension_config in schema_configuration['dimensionFieldSpecs']:
+            dimensions[dimension_config['name']] = pinot_type_to_python_type[dimension_config['dataType']]
 
-    for metric_config in schema_configuration['metricFieldSpecs']:
-        metrics[metric_config['name']] = pinot_type_to_python_type[metric_config['dataType']]
+    if 'metricFieldSpecs' in schema_configuration:
+        for metric_config in schema_configuration['metricFieldSpecs']:
+            metrics[metric_config['name']] = pinot_type_to_python_type[metric_config['dataType']]
 
-    for time_config in schema_configuration['dateTimeFieldSpecs']:
-        time_columns[time_config['name']] = {
-            'data_type': pinot_type_to_python_type[time_config['dataType']],
-            'format': time_config['format'],
-            'granularity': time_config['granularity']
-        }
+    if 'dateTimeFieldSpecs' in schema_configuration:
+        for time_config in schema_configuration['dateTimeFieldSpecs']:
+            time_columns[time_config['name']] = {
+                'data_type': pinot_type_to_python_type[time_config['dataType']],
+                'format': time_config['format'],
+                'granularity': time_config['granularity']
+            }
 
     return dimensions, metrics, time_columns
