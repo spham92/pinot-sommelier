@@ -1,23 +1,6 @@
 from sommelier.query_builder.metrics_table import MetricsTable
 
 
-class MockTableQuery(MetricsTable):
-    table_name = 'fake_table'
-    dimensions = {
-        'flight_number': str,
-        'airport': str,
-        'model': str
-    }
-    metrics = {
-        'price': int,
-        'distance': int
-    }
-    other = {
-        'date': str
-    }
-    date_column = 'date'
-
-
 def get_fake_table():
     return MetricsTable(
         table_name='fake_table',
@@ -109,7 +92,7 @@ def test_parse_bulk_filters():
         }
     }
 
-    parsed = MockTableQuery.parse_bulk_filters(test_input)
+    parsed = get_fake_table().parse_bulk_filters(test_input)
     for column, value, op in parsed:
         assert column in ['flight_number', 'airport', 'model']
 
@@ -135,7 +118,7 @@ def test_parse_bulk_filters_list():
         }]
     }
 
-    parsed = MockTableQuery.parse_bulk_filters(test_input)
+    parsed = get_fake_table().parse_bulk_filters(test_input)
     assert len(parsed) == 2
     assert parsed[0][2] == '!='
     assert parsed[1][2] == 'bt'
