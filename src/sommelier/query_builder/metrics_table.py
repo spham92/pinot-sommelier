@@ -22,7 +22,7 @@ class MetricsTable(Table):
         converted_date_columns: ColumnTypeDict = {}
 
         for datetime_column_name, column_info in datetime_columns.items():
-            converted_date_columns[datetime_column_name] = column_info['data_type']
+            converted_date_columns[datetime_column_name] = column_info.data_type
 
         all_columns: ColumnTypeDict = dict(**dimension_columns, **metrics_columns, **converted_date_columns)
 
