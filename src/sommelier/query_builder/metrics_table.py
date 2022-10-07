@@ -1,3 +1,5 @@
+from typing import List
+
 from sommelier.query_builder.table import Table
 from sommelier.types import ColumnTypeDict, DateTypeDict
 
@@ -19,12 +21,9 @@ class MetricsTable(Table):
                  metrics_columns: ColumnTypeDict,
                  datetime_columns: DateTypeDict):
 
-        converted_date_columns: ColumnTypeDict = {}
-
-        for datetime_column_name, column_info in datetime_columns.items():
-            converted_date_columns[datetime_column_name] = column_info['data_type']
-
-        all_columns: DateTypeDict = dict(**dimension_columns, **metrics_columns, **converted_date_columns)
+        all_columns: List[str] = list(*list(dimension_columns.keys()),
+                                      *list(metrics_columns.keys()),
+                                      *list(datetime_columns.keys()))
 
         super(MetricsTable, self).__init__(table_name, all_columns)
 
