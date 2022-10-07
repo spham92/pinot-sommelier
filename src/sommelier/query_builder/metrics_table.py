@@ -21,9 +21,8 @@ class MetricsTable(Table):
                  metrics_columns: ColumnTypeDict,
                  datetime_columns: DateTypeDict):
 
-        all_columns: List[str] = list(*list(dimension_columns.keys()),
-                                      *list(metrics_columns.keys()),
-                                      *list(datetime_columns.keys()))
+        all_columns: List[str] = list(dimension_columns.keys()) + list(metrics_columns.keys()) + list(
+            datetime_columns.keys())
 
         super(MetricsTable, self).__init__(table_name, all_columns)
 
