@@ -78,8 +78,8 @@ def test_filter_date_between():
     assert 'date' in query.filters
     assert query.filters['date'][0]['op'] == 'between'
     sql = query.get_sql_query()
-    assert '"date">=\'20180101\'' in sql
-    assert '"date"<=\'20180106\'' in sql
+    assert 'date>=\'20180101\'' in sql
+    assert 'date<=\'20180106\'' in sql
 
 
 def test_parse_bulk_filters():

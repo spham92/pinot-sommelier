@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import Enum
+from typing import Callable
 
 YYYYMMDD_FORMAT = '%Y%m%d'
 MILLISECONDS_IN_SECONDS = 1000
@@ -42,3 +43,22 @@ def convert_date_to_type(from_value: int, from_format: DateTypes, to_format: Dat
     :return: Converted date time value
     """
     return int(CONVERT_TO_TYPE[to_format](CONVERT_TO_BASE_DATE[from_format](from_value)))
+
+
+class DateField:
+    """
+    Class that abstracts the complexity of a date field in Pinot tables
+    """
+
+    def __init__(self,
+                 name: str,
+                 data_type: Callable,
+                 date_format: str,
+                 granularity: str):
+        self.name = name
+        self.data_type = data_type
+        self.date_format = date_format
+        self.granularity = granularity
+
+    def get_convert_clause(self, convert_to: str):
+        return f'DATETIMECONVERT(\"{self.name}\", \'{self.date_format}\', \'{convert_to}\')'

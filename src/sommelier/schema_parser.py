@@ -1,3 +1,4 @@
+from sommelier.query_builder.date_types import DateField
 from sommelier.types import ColumnTypeDict, DateTypeDict
 
 pinot_type_to_python_type = {
@@ -35,10 +36,11 @@ def get_table_information_from_schema(schema_configuration):
 
     if 'dateTimeFieldSpecs' in schema_configuration:
         for time_config in schema_configuration['dateTimeFieldSpecs']:
-            time_columns[time_config['name']] = {
-                'data_type': pinot_type_to_python_type[time_config['dataType']],
-                'format': time_config['format'],
-                'granularity': time_config['granularity']
-            }
+            time_columns[time_config['name']] = DateField(
+                name=time_config['name'],
+                data_type=pinot_type_to_python_type[time_config['dataType']],
+                date_format=time_config['format'],
+                granularity=time_config['granularity']
+            )
 
     return dimensions, metrics, time_columns

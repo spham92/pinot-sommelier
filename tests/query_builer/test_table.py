@@ -35,12 +35,12 @@ def test_repr():
     query = get_fake_table()
     assert str(query) == ''
     query.select_all_columns()
-    assert str(query) == 'SELECT "airport","flight_number","model" FROM "fake_table"'
+    assert str(query) == 'SELECT airport,flight_number,model FROM fake_table'
 
     query.filter_column_by_value('flight_number', 'UA188')
     query.filter_column_by_value('model', 'B777')
     assert str(
-        query) == 'SELECT "airport","flight_number","model" FROM "fake_table" WHERE "flight_number"=\'UA188\' AND "model"=\'B777\''
+        query) == 'SELECT airport,flight_number,model FROM fake_table WHERE flight_number=\'UA188\' AND model=\'B777\''
 
 
 def test_select():
@@ -63,10 +63,10 @@ def test_select():
 def test_select_function():
     query = table_with_metric()
     query.select('COUNT(*)')
-    assert query.get_sql_query() == 'SELECT COUNT(*) FROM "metric_table"'
+    assert query.get_sql_query() == 'SELECT COUNT(*) FROM metric_table'
     query = table_with_metric()
     query.select('sum(price)')
-    assert query.get_sql_query() == 'SELECT SUM(\"price\") FROM "metric_table"'
+    assert query.get_sql_query() == 'SELECT SUM(price) FROM metric_table'
 
 
 def test_select_columns():
@@ -90,7 +90,7 @@ def test_select_columns():
 def test_select_columns_with_function():
     query = table_with_metric()
     query.select_columns(['AVG(price)', 'airport'])
-    assert query.get_sql_query() == 'SELECT AVG(\"price\"),"airport" FROM "metric_table"'
+    assert query.get_sql_query() == 'SELECT AVG(price),airport FROM metric_table'
 
 
 def test_select_all_columns():
@@ -140,7 +140,7 @@ def test_get_sql_query():
     query.select_all_columns()
     sql = query.get_sql_query()
     assert 'SELECT' in sql
-    assert 'FROM "fake_table"' in sql
+    assert 'FROM fake_table' in sql
 
     query.filters = {
         'tests': [{'op': '!=', 'value': 'not_equal'}],
@@ -157,18 +157,18 @@ def test_get_sql_query():
     assert '>=' in sql
     assert '<' in sql
     assert '<=' in sql
-    assert '"test4">=1' in sql
-    assert '"test4"<=2' in sql
-    assert '"test5"<=455' in sql
-    assert '"test6" NOT IN (4,8)' in sql
+    assert 'test4>=1' in sql
+    assert 'test4<=2' in sql
+    assert 'test5<=455' in sql
+    assert 'test6 NOT IN (4,8)' in sql
 
     query.filters = {
         'tests': [{'op': 'in', 'value': [1, 2, 3]}],
         'test1': [{'op': 'isin', 'value': ['all']}]
     }
     sql = query.get_sql_query()
-    assert '"tests" IN (1,2,3)' in sql
-    assert '"test1" IN (\'all\')' in sql
+    assert 'tests IN (1,2,3)' in sql
+    assert 'test1 IN (\'all\')' in sql
 
 
 def test_limit_function():
@@ -196,11 +196,11 @@ def test_group_by_function():
 
     query.group_by(['flight_number'])
     sql_str = query.get_sql_query()
-    assert 'GROUP BY "flight_number"' in sql_str
+    assert 'GROUP BY flight_number' in sql_str
 
     query.group_by(['flight_number', 'model'])
     sql_str = query.get_sql_query()
-    assert 'GROUP BY "flight_number","model"' in sql_str
+    assert 'GROUP BY flight_number,model' in sql_str
 
 
 def test_order_by_function():
@@ -208,7 +208,7 @@ def test_order_by_function():
     query.select('Count(*)')
     query.group_by(['flight_number'])
     query.order_by('Count(*)', order=Order.desc)
-    assert 'SELECT COUNT(*) FROM \"fake_table\" GROUP BY \"flight_number\" ORDER BY COUNT(*) DESC' == query.get_sql_query()
+    assert 'SELECT COUNT(*) FROM fake_table GROUP BY flight_number ORDER BY COUNT(*) DESC' == query.get_sql_query()
 
 
 def test_custom_filter():
@@ -222,11 +222,11 @@ def test_custom_filter():
     query.select_all_columns().add_custom_filter(criterion)
 
     sql_str = query.get_sql_query()
-    assert 'WHERE "flight_number"=\'UA188\'' in sql_str
+    assert 'WHERE flight_number=\'UA188\'' in sql_str
 
     query.select_all_columns().add_custom_filter(criterion)
     sql_str = query.get_sql_query()
-    assert 'WHERE "flight_number"=\'UA188\' AND "flight_number"=\'UA188\'' in sql_str
+    assert 'WHERE flight_number=\'UA188\' AND flight_number=\'UA188\'' in sql_str
 
 
 def test_build_criterion_for_filter():

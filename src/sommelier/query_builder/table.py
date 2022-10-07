@@ -44,7 +44,7 @@ class Table(object):
         return self._pypika_table
 
     def get_sql_query(self):
-        return str(self.get_query())
+        return self.get_query().get_sql(quote_char=None)
 
     @staticmethod
     def operator_to_criterion(operator: str, column: Field, value: Union[str, int, float]):
@@ -102,6 +102,7 @@ class Table(object):
             parsed_term = self.generate_term(field)
             if parsed_term:
                 parsed_terms.append(parsed_term)
+
         query = pypika.Query.from_(table).select(*parsed_terms)
 
         criterion_for_basic_ops = self.build_criterion_for_filter(self.filters)

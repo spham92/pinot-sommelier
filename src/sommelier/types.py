@@ -1,11 +1,7 @@
-from typing import Dict, Callable, TypedDict
+from typing import Dict, Callable
 
-
-class DateColumnInfo(TypedDict):
-    format: str
-    data_type: Callable
-    granularity: str
+from sommelier.query_builder.date_types import DateField
 
 
 ColumnTypeDict = Dict[str, Callable]
-DateTypeDict = Dict[str, DateColumnInfo]
+DateTypeDict = Dict[str, DateField]
