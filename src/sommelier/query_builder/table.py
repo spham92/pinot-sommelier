@@ -25,7 +25,7 @@ class Table(object):
     def __repr__(self):
         return self.get_sql_query()
 
-    def __init__(self, table_name: str, columns: List[str]):
+    def __init__(self, table_name: str, columns: ColumnTypeDict):
         self.table_name = table_name
         self.columns = columns
 
