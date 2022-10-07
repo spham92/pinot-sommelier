@@ -13,7 +13,13 @@ def get_fake_table():
             'price': int,
             'distance': int
         },
-        date_column='date')
+        datetime_columns={
+            'date': {
+                'format': 'DaysSinceEpoch',
+                'data_type': int,
+                'granularity': '1:DAYS'
+            }
+        })
 
 
 def test_select_all_dimensions_and_metrics():

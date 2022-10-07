@@ -1,7 +1,5 @@
-from typing import Callable, Dict
-
 from sommelier.query_builder.table import Table
-from sommelier.types import ColumnTypeDict
+from sommelier.types import ColumnTypeDict, DateTypeDict
 
 
 class MetricsTable(Table):
@@ -19,15 +17,20 @@ class MetricsTable(Table):
     def __init__(self, table_name: str,
                  dimension_columns: ColumnTypeDict,
                  metrics_columns: ColumnTypeDict,
-                 date_column: str):
+                 datetime_columns: DateTypeDict):
 
-        all_columns = dict(**dimension_columns, **metrics_columns, **{date_column: str})
+        converted_date_columns: ColumnTypeDict = {}
+
+        for datetime_column_name, column_info in datetime_columns.items():
+            converted_date_columns[datetime_column_name] = column_info['data_type']
+
+        all_columns: DateTypeDict = dict(**dimension_columns, **metrics_columns, **converted_date_columns)
 
         super(MetricsTable, self).__init__(table_name, all_columns)
 
-        self.dimensions: Dict[str, Callable] = dimension_columns
-        self.metrics: Dict[str, Callable] = metrics_columns
-        self.date_column = date_column
+        self.dimensions: ColumnTypeDict = dimension_columns
+        self.metrics: ColumnTypeDict = metrics_columns
+        self.datetime_columns: DateTypeDict = datetime_columns
 
     def _selected_column_strings(self):
         """
@@ -59,21 +62,27 @@ class MetricsTable(Table):
         """
         return self.select_columns(self.metrics.keys())
 
-    def filter_dates_between(self, start=None, end=None):
+    def filter_dates_between(self, start=None, end=None, date_column_override=None):
         """
-        It is assumed the Pinot table has a timestamp or date column
+        Use the first column unless an override is provided
 
         :param str start: YYYYMMDD
         :param str end: YYYYMMDD
+        :param str date_column_override: use this column instead of the default
         :return: The current query instance
         """
+        datetime_column = list(self.datetime_columns.keys())[0]
+
+        if date_column_override:
+            datetime_column = date_column_override
+
         if start and end:
-            self.filter_column_by_value(self.date_column, [start, end], operator='between')
+            self.filter_column_by_value(datetime_column, [start, end], operator='between')
         else:
             if start:
-                self.filter_column_by_value(self.date_column, start, operator='>=')
+                self.filter_column_by_value(datetime_column, start, operator='>=')
             if end:
-                self.filter_column_by_value(self.date_column, end, operator='<=')
+                self.filter_column_by_value(datetime_column, end, operator='<=')
 
         return self
 

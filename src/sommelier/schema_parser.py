@@ -1,4 +1,4 @@
-from sommelier.types import ColumnTypeDict
+from sommelier.types import ColumnTypeDict, DateTypeDict
 
 pinot_type_to_python_type = {
     'INT': int,
@@ -23,7 +23,7 @@ def get_table_information_from_schema(schema_configuration):
     """
     metrics: ColumnTypeDict = {}
     dimensions: ColumnTypeDict = {}
-    time_columns = {}
+    time_columns: DateTypeDict = {}
 
     if 'dimensionFieldSpecs' in schema_configuration:
         for dimension_config in schema_configuration['dimensionFieldSpecs']:
