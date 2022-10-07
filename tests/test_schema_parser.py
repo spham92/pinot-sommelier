@@ -51,5 +51,5 @@ def test_get_table_information_from_schema():
     assert len(metrics) == 1
     assert len(time_columns) == 3
 
-    assert metrics["price"] == float
-    assert dimensions["flightNumber"] == int
+    assert metrics['price'] == float
+    assert dimensions['flightNumber'] == int
