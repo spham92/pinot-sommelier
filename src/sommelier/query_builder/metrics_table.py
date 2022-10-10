@@ -1,3 +1,6 @@
+from typing import Optional
+
+from sommelier.query_builder.date_types import DateField
 from sommelier.query_builder.table import Table
 from sommelier.types import ColumnTypeDict, DateTypeDict
 
@@ -24,7 +27,11 @@ class MetricsTable(Table):
         for datetime_column_name, column_info in datetime_columns.items():
             converted_date_columns[datetime_column_name] = column_info.data_type
 
-        all_columns: ColumnTypeDict = dict(**dimension_columns, **metrics_columns, **converted_date_columns)
+        all_columns: ColumnTypeDict = dict(
+            **dimension_columns,
+            **metrics_columns,
+            **converted_date_columns
+        )
 
         super(MetricsTable, self).__init__(table_name, all_columns)
 
@@ -132,3 +139,10 @@ class MetricsTable(Table):
                     op = '=='
                 parsed.append((column, value, op))
         return parsed
+
+    def get_milliseconds_datetime_column(self) -> Optional[DateField]:
+        for datetime_candidate in self.datetime_columns.values():
+            if '1:MILLISECONDS' in datetime_candidate.date_format:
+                return datetime_candidate
+
+        return None

@@ -1,3 +1,4 @@
+from sommelier.query_builder.date_types import DateField
 from sommelier.query_builder.metrics_table import MetricsTable
 
 
@@ -14,11 +15,18 @@ def get_fake_table():
             'distance': int
         },
         datetime_columns={
-            'date': {
-                'format': 'DaysSinceEpoch',
-                'data_type': int,
-                'granularity': '1:DAYS'
-            }
+            'date': DateField(
+                name='date',
+                data_type=int,
+                date_format='1:DAYS:SIMPLE_DATE_FORMAT:yyyy-MM-dd',
+                granularity='1:DAYS'
+            ),
+            'ms': DateField(
+                name='ms',
+                data_type=int,
+                date_format='1:MILLISECONDS:EPOCH',
+                granularity='15:MINUTES'
+            )
         })
 
 
@@ -128,3 +136,10 @@ def test_parse_bulk_filters_list():
     assert len(parsed) == 2
     assert parsed[0][2] == '!='
     assert parsed[1][2] == 'bt'
+
+
+def test_get_milliseconds_datetime_column():
+    query_builder = get_fake_table()
+    ms_column_information = query_builder.get_milliseconds_datetime_column()
+
+    assert ms_column_information.name == 'ms'

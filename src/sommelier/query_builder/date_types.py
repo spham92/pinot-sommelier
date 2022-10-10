@@ -60,5 +60,6 @@ class DateField:
         self.date_format = date_format
         self.granularity = granularity
 
-    def get_convert_clause(self, convert_to: str):
+    def get_convert_clause(self, convert_to: str, alias: str):
         return f'DATETIMECONVERT(\"{self.name}\", \'{self.date_format}\', \'{convert_to}\')'
+
