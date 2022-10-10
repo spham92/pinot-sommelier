@@ -1,16 +1,17 @@
 from datetime import datetime
 from enum import Enum
-from typing import Callable
+from typing import Callable, Optional
 
 YYYYMMDD_FORMAT = '%Y%m%d'
 MILLISECONDS_IN_SECONDS = 1000
 
 
 class DateTypes(Enum):
-    MILLISECONDS_SINCE_EPOCH = 'MILLISECONDS_SINCE_EPOCH'
-    SECONDS_SINCE_EPOCH = 'SECONDS_SINCE_EPOCH'
-    MINUTES_SINCE_EPOCH = 'MINUTES_SINCE_EPOCH'
-    HOURS_SINCE_EPOCH = 'HOURS_SINCE_EPOCH'
+    MILLISECONDS_SINCE_EPOCH = 'MILLISECONDS:EPOCH'
+    SECONDS_SINCE_EPOCH = 'SECONDS:EPOCH'
+    MINUTES_SINCE_EPOCH = 'MINUTES:EPOCH'
+    HOURS_SINCE_EPOCH = 'HOURS:EPOCH'
+    SIMPLE_DATE_FORMAT = 'SIMPLE_DATE_FORMAT'
     YYYYMMDD = 'YYYYMMDD'
 
 
@@ -59,6 +60,17 @@ class DateField:
         self.data_type = data_type
         self.date_format = date_format
         self.granularity = granularity
+
+    def get_date_type(self) -> Optional[DateTypes]:
+        for format_candidate in DateTypes:
+            if format_candidate.value in self.date_format:
+                return format_candidate
+
+        return None
+
+    def get_simple_date_format(self) -> str:
+        format_parts = self.date_format.split(':')
+        return format_parts[-1]
 
     def get_convert_clause(self, convert_to: str, alias: str):
         return f'DATETIMECONVERT(\"{self.name}\", \'{self.date_format}\', \'{convert_to}\')'
