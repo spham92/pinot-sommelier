@@ -72,11 +72,10 @@ class DateField:
         format_parts = self.date_format.split(':')
         return format_parts[-1]
 
-    def get_convert_clause(self, convert_to: str, alias: str = None):
-        convert = f'DATETIMECONVERT({self.name}, \'{self.date_format}\', \'{convert_to}\', \'{self.granularity}\')'
+    def get_convert_clause(self, convert_to: str, alias: str = None, granularity: str = None):
+        convert = f'DATETIMECONVERT({self.name}, \'{self.date_format}\', \'{convert_to}\', \'{granularity or self.granularity}\')'
 
         if alias:
             convert += f' AS {alias}'
 
         return convert
-

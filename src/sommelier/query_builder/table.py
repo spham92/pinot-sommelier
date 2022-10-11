@@ -125,7 +125,18 @@ class Table(object):
 
         return query
 
-    def group_by(self, columns: List[str]):
+    def group_by(self, column: str):
+        """
+        Add single columns to list
+
+        :param str column: string names
+        :return: The current query instance
+        """
+        self._group_by.append(column)
+        self._group_by = sorted(self._group_by)
+        return self
+
+    def group_by_columns(self, columns: List[str]):
         """
         Add the columns to be grouped by
 
