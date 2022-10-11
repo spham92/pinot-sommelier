@@ -191,7 +191,7 @@ class Table(object):
             elif function == 'Distinctcount':
                 term = DistinctCount(column)
 
-            return term
+            return Field(column_string)
         else:
             if column_string == '*':
                 return Star()
