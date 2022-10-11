@@ -193,26 +193,19 @@ class Table(object):
 
             return term
         else:
-            if column_string in self.columns:
-                return Field(column_string)
-            elif column_string == '*':
+            if column_string == '*':
                 return Star()
-            return None
+            else:
+                return Field(column_string)
 
     def select(self, column: str):
         """
-        If the column exist in the dimensions or metrics column list of the
-        associated table, add the column to the "selected" attribute
+        Add to internal tracked list of columns to select
 
         :param str column: Name of the column to add to select
         :return: The current query instance
         """
-        matches = FIELD_AGGREGATION_PATTERN.match(column)
-        # 4 cases. Aggregation on field that exists. Aggregation on *. Field that exists. *
-        if (matches and len(matches.groups()) == 2
-            and (matches.groups()[1] in self.columns or matches.groups()[1] == '*'))\
-                or column in self.columns or column == '*':
-            self._selected.add(column)
+        self._selected.add(column)
 
         return self
 

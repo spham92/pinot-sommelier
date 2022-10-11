@@ -141,7 +141,11 @@ class MetricsTable(Table):
         return parsed
 
     def get_milliseconds_datetime_column(self) -> Optional[DateField]:
-        for datetime_candidate in self.datetime_columns.values():
+        return MetricsTable.get_milliseconds_from_datetime_columns(self.datetime_columns)
+
+    @staticmethod
+    def get_milliseconds_from_datetime_columns(datetime_columns) -> Optional[DateField]:
+        for datetime_candidate in datetime_columns.values():
             if '1:MILLISECONDS' in datetime_candidate.date_format:
                 return datetime_candidate
 

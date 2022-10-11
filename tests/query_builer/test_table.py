@@ -45,17 +45,15 @@ def test_repr():
 
 def test_select():
     """
-    Ensure columns that don't exist in the table are not added. Also ensure columns aren't duplicated
+    Also ensure columns aren't duplicated
     """
     query = get_fake_table()
-    query.select('should_not_exist')
-    assert len(query._selected) == 0
-    assert 'should_not_exist' not in query._selected
 
     query.select('airport')
     assert len(query._selected) == 1
     assert 'airport' in query._selected
 
+    # If selected again, should not be duplicated
     query.select('airport')
     assert len(query._selected) == 1
 
@@ -71,12 +69,11 @@ def test_select_function():
 
 def test_select_columns():
     """
-    Ensure columns that don't exist in the table are not added. Also ensure columns aren't duplicated
+    Also ensure columns aren't duplicated
     """
     query = get_fake_table()
-    query.select_columns(['should_not_exist', 'model', 'flight_number'])
+    query.select_columns(['model', 'flight_number'])
     assert len(query._selected) == 2
-    assert 'should_not_exist' not in query._selected
     assert 'model' in query._selected
     assert 'flight_number' in query._selected
 

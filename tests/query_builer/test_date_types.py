@@ -18,13 +18,13 @@ def force_utc_timezone(request):
 
 
 @pytest.mark.parametrize('from_value, from_type, to_type, expected', (
-        (MS_SINCE_EPOCH_20200303, DateTypes.MILLISECONDS_SINCE_EPOCH, DateTypes.MILLISECONDS_SINCE_EPOCH, MS_SINCE_EPOCH_20200303),
-        (MS_SINCE_EPOCH_20200303, DateTypes.MILLISECONDS_SINCE_EPOCH, DateTypes.SECONDS_SINCE_EPOCH, MS_SINCE_EPOCH_20200303 / 1000),
-        (MS_SINCE_EPOCH_20200303, DateTypes.MILLISECONDS_SINCE_EPOCH, DateTypes.MINUTES_SINCE_EPOCH, MINUTES_SINCE_EPOCH_20200303),
-        (MS_SINCE_EPOCH_20200303, DateTypes.MILLISECONDS_SINCE_EPOCH, DateTypes.HOURS_SINCE_EPOCH, MINUTES_SINCE_EPOCH_20200303 / 24),
-        (MS_SINCE_EPOCH_20200303, DateTypes.MILLISECONDS_SINCE_EPOCH, DateTypes.YYYYMMDD, 20200303),
-        (MINUTES_SINCE_EPOCH_20200303, DateTypes.MINUTES_SINCE_EPOCH, DateTypes.MINUTES_SINCE_EPOCH, MINUTES_SINCE_EPOCH_20200303),
-        (MINUTES_SINCE_EPOCH_20200303, DateTypes.MINUTES_SINCE_EPOCH, DateTypes.YYYYMMDD, 20200303),
+        (MS_SINCE_EPOCH_20200303, DateTypes.MILLISECONDS, DateTypes.MILLISECONDS, MS_SINCE_EPOCH_20200303),
+        (MS_SINCE_EPOCH_20200303, DateTypes.MILLISECONDS, DateTypes.SECONDS, MS_SINCE_EPOCH_20200303 / 1000),
+        (MS_SINCE_EPOCH_20200303, DateTypes.MILLISECONDS, DateTypes.MINUTES, MINUTES_SINCE_EPOCH_20200303),
+        (MS_SINCE_EPOCH_20200303, DateTypes.MILLISECONDS, DateTypes.HOURS, MINUTES_SINCE_EPOCH_20200303 / 24),
+        (MS_SINCE_EPOCH_20200303, DateTypes.MILLISECONDS, DateTypes.YYYYMMDD, 20200303),
+        (MINUTES_SINCE_EPOCH_20200303, DateTypes.MINUTES, DateTypes.MINUTES, MINUTES_SINCE_EPOCH_20200303),
+        (MINUTES_SINCE_EPOCH_20200303, DateTypes.MINUTES, DateTypes.YYYYMMDD, 20200303),
 ))
 def test_convert_date_to_type(from_value: int, from_type: int, to_type: int, expected):
     assert convert_date_to_type(from_value, from_type, to_type) == expected
@@ -32,7 +32,7 @@ def test_convert_date_to_type(from_value: int, from_type: int, to_type: int, exp
 
 def test_date_field():
     ms_field = DateField(name='foo', data_type=int, date_format='1:MILLISECONDS:EPOCH', granularity='15:MINUTES')
-    assert ms_field.get_date_type() == DateTypes.MILLISECONDS_SINCE_EPOCH
+    assert ms_field.get_date_type() == DateTypes.MILLISECONDS
 
     simple_date_field = DateField(name='foo',
                                   data_type=str,

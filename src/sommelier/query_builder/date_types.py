@@ -7,29 +7,29 @@ MILLISECONDS_IN_SECONDS = 1000
 
 
 class DateTypes(Enum):
-    MILLISECONDS_SINCE_EPOCH = 'MILLISECONDS:EPOCH'
-    SECONDS_SINCE_EPOCH = 'SECONDS:EPOCH'
-    MINUTES_SINCE_EPOCH = 'MINUTES:EPOCH'
-    HOURS_SINCE_EPOCH = 'HOURS:EPOCH'
+    MILLISECONDS = 'MILLISECONDS'
+    SECONDS = 'SECONDS'
+    MINUTES = 'MINUTES'
+    HOURS = 'HOURS'
     SIMPLE_DATE_FORMAT = 'SIMPLE_DATE_FORMAT'
     YYYYMMDD = 'YYYYMMDD'
 
 
 # Base date will be milliseconds since epoch
 CONVERT_TO_BASE_DATE = {
-    DateTypes.MILLISECONDS_SINCE_EPOCH: lambda x: x,
-    DateTypes.SECONDS_SINCE_EPOCH: lambda x: x * MILLISECONDS_IN_SECONDS,
-    DateTypes.MINUTES_SINCE_EPOCH: lambda x: CONVERT_TO_BASE_DATE[DateTypes.SECONDS_SINCE_EPOCH](x) * 60,
-    DateTypes.HOURS_SINCE_EPOCH: lambda x: CONVERT_TO_BASE_DATE[DateTypes.MINUTES_SINCE_EPOCH](x) * 24,
+    DateTypes.MILLISECONDS: lambda x: x,
+    DateTypes.SECONDS: lambda x: x * MILLISECONDS_IN_SECONDS,
+    DateTypes.MINUTES: lambda x: CONVERT_TO_BASE_DATE[DateTypes.SECONDS](x) * 60,
+    DateTypes.HOURS: lambda x: CONVERT_TO_BASE_DATE[DateTypes.MINUTES](x) * 24,
     DateTypes.YYYYMMDD: lambda x: int(datetime.strptime(f'{x}', YYYYMMDD_FORMAT).timestamp()) * MILLISECONDS_IN_SECONDS,
 }
 
 # Convert milliseconds to desired format
 CONVERT_TO_TYPE = {
-    DateTypes.MILLISECONDS_SINCE_EPOCH: lambda x: x,
-    DateTypes.SECONDS_SINCE_EPOCH: lambda x: x / MILLISECONDS_IN_SECONDS,
-    DateTypes.MINUTES_SINCE_EPOCH: lambda x: CONVERT_TO_TYPE[DateTypes.SECONDS_SINCE_EPOCH](x) / 60,
-    DateTypes.HOURS_SINCE_EPOCH: lambda x: CONVERT_TO_TYPE[DateTypes.MINUTES_SINCE_EPOCH](x) / 24,
+    DateTypes.MILLISECONDS: lambda x: x,
+    DateTypes.SECONDS: lambda x: x / MILLISECONDS_IN_SECONDS,
+    DateTypes.MINUTES: lambda x: CONVERT_TO_TYPE[DateTypes.SECONDS](x) / 60,
+    DateTypes.HOURS: lambda x: CONVERT_TO_TYPE[DateTypes.MINUTES](x) / 24,
     DateTypes.YYYYMMDD: lambda x: int(datetime.fromtimestamp(x / MILLISECONDS_IN_SECONDS).strftime(YYYYMMDD_FORMAT)),
 }
 
@@ -73,5 +73,5 @@ class DateField:
         return format_parts[-1]
 
     def get_convert_clause(self, convert_to: str, alias: str):
-        return f'DATETIMECONVERT(\"{self.name}\", \'{self.date_format}\', \'{convert_to}\')'
+        return f'DATETIMECONVERT({self.name}, \'{self.date_format}\', \'{convert_to}\', \'{self.granularity}\')'
 
