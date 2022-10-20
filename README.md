@@ -1,6 +1,6 @@
 # pinot-sommelier
 
-This library helps you build programmatically build queries for apache pinot.
+This library helps you progmatically build queries for apache pinot.
 
 ## Usage
 
